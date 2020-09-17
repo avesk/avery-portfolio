@@ -12,7 +12,7 @@ const Repos = (repos: GHRepoType[], avatarUrl: string) => repos.map((repo: GHRep
   <ContentCard 
     title={ repo.name } 
     description={ repo.description } 
-    titleUrl={ repo.url } 
+    titleUrl={ repo.htmlUrl } 
     avatarUrl={ avatarUrl }
     loading={ false } />
 );

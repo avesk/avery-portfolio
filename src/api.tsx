@@ -1,14 +1,15 @@
-import { map, pick, filter, flow, includes } from 'lodash';
+import { map, pick, filter, flow, includes, assign, get } from 'lodash';
 
 import { GHRepoType } from './types/GHRepoType';
 import { GHProfileType } from './types/GHProfileType';
 
 
 const fetchRepos = async (): Promise<GHRepoType[]> => {
-  const rawRepos = await fetch('https://api.github.com/users/avesk/repos')
+  const res = await fetch('https://api.github.com/users/avesk/repos')
     .then((res) => res.json())
     .catch((err) => console.log(err));
-  console.log(rawRepos);
+  console.log(res);
+  const mapResToRepoType = (res: any): GHRepoType[] => map( res, (repo): GHRepoType => { return { name: get(repo, 'name'), htmlUrl: get(repo, 'html_url'), description: get(repo, 'description') }} );
 
   const filterRepos = (repos: GHRepoType[]): GHRepoType[] => filter(
     repos, 
@@ -16,14 +17,14 @@ const fetchRepos = async (): Promise<GHRepoType[]> => {
   );
   const stripRepos = (repos: GHRepoType[]): GHRepoType[] => map(
     repos, 
-    (repo: GHRepoType): GHRepoType => pick(repo, ['name', 'url', 'description'])
+    (repo: GHRepoType): GHRepoType => pick(repo, ['name', 'htmlUrl', 'description'])
   );
-  console.log(filterRepos(rawRepos));
 
   return flow(
     filterRepos,
-    stripRepos,
-  )(rawRepos);
+    // stripRepos,
+    mapResToRepoType,
+  )(res);
 }; 
 
 const fetchGHProfile = async (): Promise<GHProfileType> => {
