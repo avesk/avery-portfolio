@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'antd';
+import { Layout, Row, Col } from 'antd';
 
 import { fetchRepos, fetchGHProfile } from './api';
 import { GHRepoType } from './types/GHRepoType';
@@ -8,13 +8,15 @@ import ContentCard from './components/ContentCard';
 
 import './App.css';
 
-const Repos = (repos: GHRepoType[], avatarUrl: string) => repos.map((repo: GHRepoType) => 
-  <ContentCard 
-    title={ repo.name } 
-    description={ repo.description } 
-    titleUrl={ repo.htmlUrl } 
-    avatarUrl={ avatarUrl }
-    loading={ false } />
+const { Header, Footer, Content } = Layout;
+
+const RepoCols = (repos: GHRepoType[], avatarUrl: string) => repos.map((repo: GHRepoType) =>
+  <ContentCard
+    title={repo.name}
+    description={repo.description}
+    titleUrl={repo.htmlUrl}
+    avatarUrl={avatarUrl}
+    loading={false} />
 );
 
 const App: React.FC = () => {
@@ -30,16 +32,20 @@ const App: React.FC = () => {
       setGHProfile(res);
       console.log(res);
     });
-    
+
   }, []);
 
   return <div className="App">
-    <Button type="primary">Button</Button>
-    {repos && ghProfile  
-      ? Repos(repos, ghProfile.avatarUrl)
-      : <ContentCard loading={ true } />
-    }
-    
+    <Layout>
+      <Header>Avery Kushner</Header>
+      <Content style={{ padding: '50px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+        {repos && ghProfile
+          ? RepoCols(repos, ghProfile.avatarUrl)
+          : <ContentCard loading={true} />
+        }
+      </Content>
+      <Footer style={{ position: 'fixed', left: 0, bottom: 0, width: '100%' }}><a href='https://www.linkedin.com/in/avery-kushner-194b39116/'>LinkedIn</a></Footer>
+    </Layout>
   </div>
 };
 

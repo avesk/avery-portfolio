@@ -1,4 +1,4 @@
-import { map, pick, filter, flow, includes, assign, get } from 'lodash';
+import { map, filter, flow, includes, get } from 'lodash';
 
 import { GHRepoType } from './types/GHRepoType';
 import { GHProfileType } from './types/GHProfileType';
@@ -9,20 +9,18 @@ const fetchRepos = async (): Promise<GHRepoType[]> => {
     .then((res) => res.json())
     .catch((err) => console.log(err));
   console.log(res);
-  const mapResToRepoType = (res: any): GHRepoType[] => map( res, (repo): GHRepoType => { return { name: get(repo, 'name'), htmlUrl: get(repo, 'html_url'), description: get(repo, 'description') }} );
+  const mapResToRepoType = (res: any): GHRepoType[] => map( 
+    res, 
+    (repo): GHRepoType => { return { name: get(repo, 'name'), htmlUrl: get(repo, 'html_url'), description: get(repo, 'description') }} 
+  );
 
   const filterRepos = (repos: GHRepoType[]): GHRepoType[] => filter(
     repos, 
     (repo: GHRepoType) => includes(['RSCS', 'react-synth-js', 'echo-synth', 'bot-selection-interface', 'avery-portfolio'], repo.name)
   );
-  const stripRepos = (repos: GHRepoType[]): GHRepoType[] => map(
-    repos, 
-    (repo: GHRepoType): GHRepoType => pick(repo, ['name', 'htmlUrl', 'description'])
-  );
 
   return flow(
     filterRepos,
-    // stripRepos,
     mapResToRepoType,
   )(res);
 }; 
